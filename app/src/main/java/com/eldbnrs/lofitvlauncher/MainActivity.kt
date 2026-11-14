@@ -7,6 +7,7 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -21,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -88,15 +90,6 @@ val LOFI_SCENES = listOf(
         imageUrl = "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",
         streamUrl = "https://ice2.somafm.com/dronezone-128-mp3",
         gradientColors = listOf(Color(0xFF23153C), Color(0xFF120924))
-    ),
-    AmbientScene(
-        title = "Rainy Window Lofi",
-        quoteMain = "Slow down and enjoy the simple ",
-        quoteHighlight = "things.",
-        author = "- LOFI WISDOM",
-        imageUrl = "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=1920&q=80",
-        streamUrl = "https://ice2.somafm.com/Lush-128-mp3",
-        gradientColors = listOf(Color(0xFF141E30), Color(0xFF243B55))
     )
 )
 
@@ -254,6 +247,17 @@ fun LofiLauncherUI(
     var weatherText by remember { mutableStateOf("52° Cloudy") }
     val apps = remember { getTvApps(context) }
 
+    val infiniteTransition = rememberInfiniteTransition(label = "live_wallpaper")
+    val wallpaperScale by infiniteTransition.animateFloat(
+        initialValue = 1.0f,
+        targetValue = 1.04f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(14000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scale"
+    )
+
     LaunchedEffect(Unit) {
         while (true) {
             val now = Date()
@@ -280,13 +284,17 @@ fun LofiLauncherUI(
             model = scene.imageUrl,
             contentDescription = scene.title,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(wallpaperScale)
         )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = if (isAmbientMode) 0.28f else 0.48f))
+                .background(Color.Black.copy(alpha = if (isAmbientMode) 0.25f else 0.45f))
         )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -425,4 +433,3 @@ fun getTvApps(context: Context): List<AppItem> {
         }
         .sortedBy { it.name.lowercase() }
 }
-
