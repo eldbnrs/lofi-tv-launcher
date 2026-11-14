@@ -65,12 +65,14 @@ data class AmbientScene(
 
 val LOFI_SCENES = listOf(
     AmbientScene(
-        title = "Cozy Autumn Night",
+        title = "Cozy Autumn Porch",
         quoteMain = "We're all just walking each other ",
         quoteHighlight = "home.",
         author = "- RAM DASS",
+        // Using your exact video/artwork aesthetic reference
         imageUrl = "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1920&q=80",
-        streamUrl = "https://ice2.somafm.com/groovesalad-128-mp3",
+        // Soft Lofi Jazz stream URL
+        streamUrl = "https://streams.ilovemusic.de/ilove-lofi-128.mp3",
         gradientColors = listOf(Color(0xFF101B2B), Color(0xFF070B14))
     ),
     AmbientScene(
@@ -104,13 +106,14 @@ val PIXEL_DIGITS = mapOf(
     '7' to listOf("11111", "00001", "00010", "00100", "01000", "01000", "01000"),
     '8' to listOf("01110", "10001", "10001", "01110", "10001", "10001", "01110"),
     '9' to listOf("01110", "10001", "10001", "01111", "00001", "00001", "01110"),
-    ':' to listOf("000", "010", "111", "010", "010", "111", "010")
+    // Fixed Colon with distinct separated top and bottom clock dots
+    ':' to listOf("00000", "01100", "01100", "00000", "01100", "01100", "00000")
 )
 
 @Composable
 fun PixelMatrixClock(timeString: String, pixelSize: Dp = 9.dp, gap: Dp = 2.dp) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(pixelSize * 1.3f),
+        horizontalArrangement = Arrangement.spacedBy(pixelSize * 1.5f),
         verticalAlignment = Alignment.CenterVertically
     ) {
         timeString.forEach { char ->
@@ -143,7 +146,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        exoPlayer = ExoPlayer.Builder(this).build()
+        exoPlayer = ExoPlayer.Builder(this).build().apply {
+            // Set lofi music to a very low, ambient background volume (30%)
+            volume = 0.3f
+        }
         setContent {
             LaunchedEffect(lastInteractionTime, isAmbientMode) {
                 if (!isAmbientMode) {
@@ -176,6 +182,7 @@ class MainActivity : ComponentActivity() {
         exoPlayer?.let { player ->
             player.setMediaItem(MediaItem.fromUri(scene.streamUrl))
             player.prepare()
+            player.volume = 0.3f // Low background jazz volume
             player.play()
             isPlayingMusic = true
         }
@@ -202,6 +209,7 @@ class MainActivity : ComponentActivity() {
                                 player.pause()
                                 isPlayingMusic = false
                             } else {
+                                player.volume = 0.3f
                                 player.play()
                                 isPlayingMusic = true
                             }
@@ -332,7 +340,7 @@ fun LofiLauncherUI(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = if (isPlayingMusic) "lofi radio" else "lofi paused",
+                        text = if (isPlayingMusic) "lofi jazz radio (soft)" else "lofi paused",
                         fontSize = 11.sp,
                         fontFamily = PixelFont,
                         color = Color.White
