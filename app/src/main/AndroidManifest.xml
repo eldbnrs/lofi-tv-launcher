@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="true" />
+    
+    <!-- Needed on Android 11+ so your launcher can see all installed TV apps -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
     <application android:label="Lofi Launcher" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTask" android:stateNotNeeded="true">
             <intent-filter>
