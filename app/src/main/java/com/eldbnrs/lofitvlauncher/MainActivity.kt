@@ -49,11 +49,7 @@ import java.util.*
 
 val PixelFont = FontFamily(Font(R.font.pixel_font))
 
-data class AppItem(
-    val name: String,
-    val packageName: String,
-    val launchIntent: Intent?
-)
+data class AppItem(val name: String, val packageName: String, val launchIntent: Intent?)
 
 data class AmbientScene(
     val title: String,
@@ -155,7 +151,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         exoPlayer = ExoPlayer.Builder(this).build()
-
         setContent {
             LaunchedEffect(lastInteractionTime, isAmbientMode) {
                 if (!isAmbientMode) {
@@ -163,7 +158,6 @@ class MainActivity : ComponentActivity() {
                     enterAmbientMode()
                 }
             }
-
             LofiLauncherUI(
                 isAmbientMode = isAmbientMode,
                 scene = LOFI_SCENES[currentSceneIndex],
@@ -197,7 +191,6 @@ class MainActivity : ComponentActivity() {
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (event.action == KeyEvent.ACTION_DOWN) {
             lastInteractionTime = System.currentTimeMillis()
-
             if (isAmbientMode) {
                 when (event.keyCode) {
                     KeyEvent.KEYCODE_DPAD_RIGHT -> {
@@ -227,11 +220,9 @@ class MainActivity : ComponentActivity() {
                         return true
                     }
                 }
-            } else {
-                if (event.keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                    enterAmbientMode()
-                    return true
-                }
+            } else if (event.keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                enterAmbientMode()
+                return true
             }
         }
         return super.dispatchKeyEvent(event)
@@ -291,78 +282,41 @@ fun LofiLauncherUI(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Black.copy(alpha = if (isAmbientMode) 0.28f else 0.48f))
         )
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 68.dp, vertical = 56.dp)
         ) {
             Column(modifier = Modifier.align(Alignment.TopStart)) {
-                PixelMatrixClock(
-                    timeString = currentTime,
-                    pixelSize = 9.dp,
-                    gap = 2.dp
-                )
-
+                PixelMatrixClock(timeString = currentTime, pixelSize = 9.dp, gap = 2.dp)
                 Spacer(modifier = Modifier.height(22.dp))
-
-                Text(
-                    text = currentDate,
-                    fontSize = 13.sp,
-                    fontFamily = PixelFont,
-                    color = Color(0xFFAEC6CF)
-                )
-
+                Text(text = currentDate, fontSize = 13.sp, fontFamily = PixelFont, color = Color(0xFFAEC6CF))
                 Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = "☁ $weatherText",
-                    fontSize = 13.sp,
-                    fontFamily = PixelFont,
-                    color = Color.White
-                )
-
+                Text(text = "☁ $weatherText", fontSize = 13.sp, fontFamily = PixelFont, color = Color.White)
                 Spacer(modifier = Modifier.height(38.dp))
-
                 Column(modifier = Modifier.width(640.dp)) {
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(color = Color.White)) {
-                                append(scene.quoteMain)
-                            }
-                            withStyle(SpanStyle(color = Color(0xFFE5A93B))) {
-                                append(scene.quoteHighlight)
-                            }
+                            withStyle(SpanStyle(color = Color.White)) { append(scene.quoteMain) }
+                            withStyle(SpanStyle(color = Color(0xFFE5A93B))) { append(scene.quoteHighlight) }
                         },
                         fontSize = 22.sp,
                         fontFamily = PixelFont,
                         lineHeight = 36.sp
                     )
                     Spacer(modifier = Modifier.height(18.dp))
-                    Text(
-                        text = scene.author,
-                        fontSize = 11.sp,
-                        fontFamily = PixelFont,
-                        color = Color(0xFFAEC6CF)
-                    )
+                    Text(text = scene.author, fontSize = 11.sp, fontFamily = PixelFont, color = Color(0xFFAEC6CF))
                 }
             }
 
             if (isAmbientMode) {
-                Row(
-                    modifier = Modifier.align(Alignment.BottomStart),
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(3.dp),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
+                Row(modifier = Modifier.align(Alignment.BottomStart), verticalAlignment = Alignment.Bottom) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(3.dp), verticalAlignment = Alignment.Bottom) {
                         Box(Modifier.width(3.dp).height(8.dp).background(Color(0xFFE5A93B)))
                         Box(Modifier.width(3.dp).height(15.dp).background(Color(0xFFE5A93B)))
                         Box(Modifier.width(3.dp).height(5.dp).background(Color(0xFFE5A93B)))
@@ -397,9 +351,7 @@ fun LofiLauncherUI(
                         contentPadding = PaddingValues(end = 32.dp)
                     ) {
                         items(apps) { app ->
-                            AppCard(app = app) {
-                                app.launchIntent?.let { context.startActivity(it) }
-                            }
+                            AppCard(app = app) { app.launchIntent?.let { context.startActivity(it) } }
                         }
                     }
                 }
@@ -412,7 +364,6 @@ fun LofiLauncherUI(
 @Composable
 fun AppCard(app: AppItem, onClick: () -> Unit) {
     var isFocused by remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .width(185.dp)
@@ -461,9 +412,7 @@ suspend fun fetchLocalWeather(): String? = withContext(Dispatchers.IO) {
 
 fun getTvApps(context: Context): List<AppItem> {
     val pm = context.packageManager
-    val intent = Intent(Intent.ACTION_MAIN, null).apply {
-        addCategory(Intent.CATEGORY_LEANBACK_LAUNCHER)
-    }
+    val intent = Intent(Intent.ACTION_MAIN, null).apply { addCategory(Intent.CATEGORY_LEANBACK_LAUNCHER) }
     return pm.queryIntentActivities(intent, 0)
         .mapNotNull { resolveInfo ->
             val pkg = resolveInfo.activityInfo.packageName
