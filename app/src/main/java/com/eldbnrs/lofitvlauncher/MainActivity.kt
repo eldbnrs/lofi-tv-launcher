@@ -425,3 +425,4 @@ fun getTvApps(context: Context): List<AppItem> {
         }
         .sortedBy { it.name.lowercase() }
 }
+
