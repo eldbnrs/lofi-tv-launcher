@@ -30,7 +30,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -105,7 +104,6 @@ val LOFI_SCENES = listOf(
     )
 )
 
-// Exact 5x7 LED Pixel Grid Map matching the screenshot
 val PIXEL_DIGITS = mapOf(
     '0' to listOf("01110", "10001", "10011", "10101", "11001", "10001", "01110"),
     '1' to listOf("00100", "01100", "00100", "00100", "00100", "00100", "01110"),
@@ -117,7 +115,7 @@ val PIXEL_DIGITS = mapOf(
     '7' to listOf("11111", "00001", "00010", "00100", "01000", "01000", "01000"),
     '8' to listOf("01110", "10001", "10001", "01110", "10001", "10001", "01110"),
     '9' to listOf("01110", "10001", "10001", "01111", "00001", "00001", "01110"),
-    ':' to listOf("000", "010", "111", "010", "010", "111", "010") // Double plus '+' colon from screenshot!
+    ':' to listOf("000", "010", "111", "010", "010", "111", "010")
 )
 
 @Composable
@@ -306,7 +304,6 @@ fun LofiLauncherUI(
                 .padding(horizontal = 68.dp, vertical = 56.dp)
         ) {
             Column(modifier = Modifier.align(Alignment.TopStart)) {
-                // True 5x7 Block Pixel Matrix Clock with Double-Plus Colon
                 PixelMatrixClock(
                     timeString = currentTime,
                     pixelSize = 9.dp,
@@ -315,7 +312,6 @@ fun LofiLauncherUI(
 
                 Spacer(modifier = Modifier.height(22.dp))
 
-                // Retro Pixel Date
                 Text(
                     text = currentDate,
                     fontSize = 13.sp,
@@ -325,7 +321,6 @@ fun LofiLauncherUI(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Cloud Icon + Weather
                 Text(
                     text = "☁ $weatherText",
                     fontSize = 13.sp,
@@ -335,7 +330,6 @@ fun LofiLauncherUI(
 
                 Spacer(modifier = Modifier.height(38.dp))
 
-                // Pixel Quote with Gold Highlighted Last Word
                 Column(modifier = Modifier.width(640.dp)) {
                     Text(
                         text = buildAnnotatedString {
@@ -360,13 +354,11 @@ fun LofiLauncherUI(
                 }
             }
 
-            // Bottom Left: Equalizer Bars + "lofi radio"
             if (isAmbientMode) {
                 Row(
                     modifier = Modifier.align(Alignment.BottomStart),
                     verticalAlignment = Alignment.Bottom
                 ) {
-                    // Pixel equalizer bars
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(3.dp),
                         verticalAlignment = Alignment.Bottom
@@ -386,7 +378,6 @@ fun LofiLauncherUI(
                 }
             }
 
-            // Bottom App Row (Hides in Ambient Mode)
             AnimatedVisibility(
                 visible = !isAmbientMode,
                 enter = fadeIn(),
